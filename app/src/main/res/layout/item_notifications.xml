@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/item_notification_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/item_notification_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_notification_title"
+        android:text="Content" />
+
+    <TextView
+        android:id="@+id/item_notification_message_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_notification_content"
+        android:text="Message id" />
+
+    <TextView
+        android:id="@+id/item_notification_channed_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Channel id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/item_notification_is_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="isRead"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/item_notification_channed_id"/>
+
+
+</RelativeLayout>
