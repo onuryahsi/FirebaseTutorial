@@ -1,12 +1,11 @@
-package com.onuryahsi.firebaseexample
+package com.onuryahsi.firebaseexample.notification
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.onuryahsi.firebaseexample.R
 import com.onuryahsi.firebaseexample.model.MyNotification
 import kotlinx.android.synthetic.main.item_notifications.view.*
 

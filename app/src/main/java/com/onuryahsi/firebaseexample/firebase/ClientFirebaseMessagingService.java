@@ -1,4 +1,4 @@
-package com.onuryahsi.firebaseexample;
+package com.onuryahsi.firebaseexample.firebase;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.onuryahsi.firebaseexample.MainActivity;
+import com.onuryahsi.firebaseexample.R;
 import com.onuryahsi.firebaseexample.model.MyNotification;
 import com.onuryahsi.firebaseexample.model.User;
 

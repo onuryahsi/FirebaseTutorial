@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_favorite"
+        android:id="@+id/action_logout"
         android:icon="@null"
-        android:title="1"
+        android:title="Logout"
         app:showAsAction="never" />
 
     <!-- Settings, should always be in the overflow -->
     <item
-        android:id="@+id/action_settings"
-        android:title="2"
+        android:id="@+id/action_delete"
+        android:title="Delete"
         app:showAsAction="never" />
 </menu>

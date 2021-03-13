@@ -1,4 +1,4 @@
-package com.onuryahsi.firebaseexample;
+package com.onuryahsi.firebaseexample.util;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

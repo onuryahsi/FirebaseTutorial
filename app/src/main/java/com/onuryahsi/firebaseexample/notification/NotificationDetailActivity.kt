@@ -1,14 +1,16 @@
-package com.onuryahsi.firebaseexample
+package com.onuryahsi.firebaseexample.notification
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.onuryahsi.firebaseexample.R
 import kotlinx.android.synthetic.main.activity_notification_detail.*
 
 class NotificationDetailActivity : AppCompatActivity() {
@@ -50,14 +52,22 @@ class NotificationDetailActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
+        val i = Intent()
         when (item!!.itemId) {
             android.R.id.home -> {
-                finish()
+
             }
-            R.id.action_favorite -> showMessage("Favorite")
-            R.id.action_settings -> showMessage("Settings")
+            R.id.action_logout -> {
+                i.putExtra("ACTION_TYPE", "LOGOUT")
+                setResult(Activity.RESULT_OK, i)
+            }
+            R.id.action_delete -> {
+                i.putExtra("ACTION_TYPE", "DELETE")
+                setResult(Activity.RESULT_OK, i)
+            }
+
         }
+        finish()
         return super.onOptionsItemSelected(item)
     }
 

@@ -1,6 +1,7 @@
 package com.onuryahsi.firebaseexample;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -22,8 +23,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,8 +36,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.onuryahsi.firebaseexample.auth.AuthActivity;
 import com.onuryahsi.firebaseexample.model.MyNotification;
 import com.onuryahsi.firebaseexample.model.User;
+import com.onuryahsi.firebaseexample.notification.NotificationDetailActivity;
+import com.onuryahsi.firebaseexample.notification.NotificationsAdapter;
+import com.onuryahsi.firebaseexample.util.ClientBroadcastReceiver;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private NotificationsAdapter notificationsAdapter;
     private List<MyNotification> allNotifications;
 
+    private Integer ACTION_RESULT_CODE = 0; // if selected Logout or Delete
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             // getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        getAuthenticatedUser();
 
         broadcastReceiver = new ClientBroadcastReceiver();
 
@@ -152,21 +162,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_favorite:
-                Log.i(TAG, "onOptionsItemSelected: 1");
-
-                break;
-            case R.id.action_settings:
-                Log.i(TAG, "onOptionsItemSelected: 2");
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void readUserChangesFromRemoteDatabase() {
@@ -261,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
                 for (DataSnapshot child : snapshot.getChildren()) {
                     allNotifications.add(child.getValue(MyNotification.class));
+                    Log.i(TAG, "Notification count: " + allNotifications.size());
                 }
                 notificationsAdapter.setNotificationList(allNotifications);
                 notificationsAdapter.setOnItemClickListener(new NotificationsAdapter.OnItemClickListener() {
@@ -274,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                         i.putExtra("message_id", myNotification.message_id);
                         i.putExtra("channel_id", myNotification.channel_id);
                         i.putExtra("is_read", myNotification.isRead);
-                        startActivity(i);
+                        startActivityForResult(i, ACTION_RESULT_CODE);
                     }
                 });
             }
@@ -287,6 +283,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTION_RESULT_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                String mData = data.getStringExtra("ACTION_TYPE");
+                if (mData.equals("LOGOUT")) {
+                    logoutUser();
+
+                } else if (mData.equals("DELETE")) {
+                    deleteUser();
+
+                }
+            }
+        }
+    }
+
+    private void getAuthenticatedUser() {
+        FirebaseUser authUser = FirebaseAuth.getInstance()
+                .getCurrentUser();
+        if (authUser != null) {
+            authUser.getEmail();
+            authUser.getUid();
+
+            Toast.makeText(this, "User Uid: " + authUser.getUid(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void getFirebaseInstance() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -295,15 +320,43 @@ public class MainActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             Log.e(TAG, "Firebase getInstanceId failed", task.getException());
                             return;
+                        } else {// Get new Instance ID token
+                            String token = task.getResult().getToken();
+                            Log.i(TAG, "Firebase Token : " + token);
                         }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        Log.i(TAG, "Firebase Token : " + token);
                     }
-
                 });
     }
+
+    private void logoutUser() {
+        FirebaseAuth user = FirebaseAuth.getInstance();
+        if (user.getCurrentUser() != null) {
+            if (!user.getCurrentUser().getUid().equals("")) {
+                AuthUI.getInstance().signOut(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                        finish();
+                    }
+                });
+            }
+        }
+    }
+
+    private void deleteUser() {
+        FirebaseAuth user = FirebaseAuth.getInstance();
+        if (user.getCurrentUser() != null) {
+            if (!user.getCurrentUser().getUid().equals("")) {
+                AuthUI.getInstance().delete(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                        finish();
+                    }
+                });
+            }
+        }
+    }
+
 // https://firebase.google.com/docs/cloud-messaging/android/client
 }
